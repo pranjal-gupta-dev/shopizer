@@ -513,4 +513,57 @@ public class ProductApi {
 		}
 	}
 
+	/**
+	 * Bulk fetch products by IDs for comparison
+	 * GET /api/v1/products/compare?ids=1,2,3
+	 * 
+	 * @param ids Product IDs (max 4)
+	 * @param merchantStore
+	 * @param language
+	 * @return List of ReadableProduct
+	 */
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping(value = "/products/compare", produces = APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "Get multiple products for comparison", 
+		notes = "Fetch up to 4 products by IDs for comparison feature")
+	@ApiResponses(value = {
+		@ApiResponse(code = 200, message = "Products retrieved successfully", response = ReadableProduct.class, responseContainer = "List"),
+		@ApiResponse(code = 400, message = "Invalid request - max 4 products allowed")
+	})
+	@ApiImplicitParams({ 
+		@ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+		@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") 
+	})
+	public ResponseEntity<List<ReadableProduct>> getProductsForCompare(
+			@RequestParam(value = "ids", required = true) List<Long> ids,
+			@ApiIgnore MerchantStore merchantStore, 
+			@ApiIgnore Language language) {
+		
+		// Validate input
+		if (ids == null || ids.isEmpty()) {
+			throw new ServiceRuntimeException("Product IDs are required");
+		}
+		
+		if (ids.size() > 4) {
+			throw new ServiceRuntimeException("Maximum 4 products allowed for comparison");
+		}
+		
+		List<ReadableProduct> products = new ArrayList<>();
+		
+		// Fetch each product
+		for (Long id : ids) {
+			try {
+				ReadableProduct product = productFacade.getProduct(merchantStore, id, language);
+				if (product != null) {
+					products.add(product);
+				}
+			} catch (Exception e) {
+				LOGGER.warn("Product with ID {} not found or inaccessible", id);
+				// Continue with other products
+			}
+		}
+		
+		return ResponseEntity.ok(products);
+	}
+
 }
