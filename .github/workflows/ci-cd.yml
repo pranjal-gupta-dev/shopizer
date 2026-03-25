@@ -49,13 +49,13 @@ jobs:
       
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: 'shopizer/**/target/surefire-reports/*.xml'
       
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: shopizer-jar
           path: shopizer/sm-shop/target/*.jar
@@ -130,7 +130,7 @@ jobs:
       
       - name: Upload Dependency Check Report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
           path: shopizer/target/dependency-check-report.html
@@ -154,7 +154,7 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Download Build Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: shopizer-jar
           path: shopizer/sm-shop/target/
