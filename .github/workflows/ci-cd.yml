@@ -169,7 +169,7 @@ jobs:
       - name: Save image as compressed artifact
         run: |
           echo "💾 Saving image (this may take 2-3 minutes)..."
-          docker save shopizerecomm/shopizer:latest | gzip > shopizer-backend-image.tar.gz
+          docker save --format=docker shopizerecomm/shopizer:latest | gzip > shopizer-backend-image.tar.gz
           ls -lh shopizer-backend-image.tar.gz
           echo "✅ Image saved as artifact"
       
