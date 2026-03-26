@@ -15,9 +15,6 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./shopizer
     
     steps:
       - name: Checkout code
@@ -42,7 +39,7 @@ jobs:
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./shopizer/target/site/jacoco/jacoco.xml
+          files: ./target/site/jacoco/jacoco.xml
           flags: unittests
           name: codecov-shopizer
           fail_ci_if_error: false
@@ -52,22 +49,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: 'shopizer/**/target/surefire-reports/*.xml'
+          path: '**/target/surefire-reports/*.xml'
       
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: shopizer-jar
-          path: shopizer/sm-shop/target/*.jar
+          path: sm-shop/target/*.jar
           retention-days: 7
 
   code-quality:
     name: Code Quality Analysis
     runs-on: ubuntu-latest
     needs: build-and-test
-    defaults:
-      run:
-        working-directory: ./shopizer
     
     steps:
       - name: Checkout code
@@ -106,9 +100,6 @@ jobs:
     name: Security Scanning
     runs-on: ubuntu-latest
     needs: build-and-test
-    defaults:
-      run:
-        working-directory: ./shopizer
     
     steps:
       - name: Checkout code
@@ -133,12 +124,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report
-          path: shopizer/target/dependency-check-report.html
+          path: target/dependency-check-report.html
       
       - name: Secret Scanning
         uses: trufflesecurity/trufflehog@main
         with:
-          path: ./shopizer
+          path: ./
           base: ${{ github.event.repository.default_branch }}
           head: HEAD
         continue-on-error: true
@@ -157,16 +148,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: shopizer-jar
-          path: shopizer/sm-shop/target/
+          path: sm-shop/target/
       
       - name: Verify JAR exists
         run: |
-          ls -lh shopizer/sm-shop/target/*.jar
+          ls -lh sm-shop/target/*.jar
           echo "✅ JAR artifact downloaded"
       
       - name: Build Docker image
         run: |
-          cd shopizer/sm-shop
+          cd sm-shop
           docker build -t shopizerecomm/shopizer:latest .
           echo "✅ Docker image built successfully"
       
