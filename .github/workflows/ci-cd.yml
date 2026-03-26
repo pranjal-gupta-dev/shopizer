@@ -2,9 +2,9 @@ name: Shopizer CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, git-pipeline]
   pull_request:
-    branches: [main, develop]
+    branches: [main, develop, git-pipeline]
 
 env:
   JAVA_VERSION: '17'
