@@ -158,7 +158,7 @@ jobs:
       - name: Build Docker image
         run: |
           cd sm-shop
-          docker build -t shopizerecomm/shopizer:latest .
+          DOCKER_BUILDKIT=0 docker build -t shopizerecomm/shopizer:latest .
           echo "✅ Docker image built successfully"
       
       - name: Test image
