@@ -1,6 +1,6 @@
 package com.salesmanager.core.business.services.search;
 
-import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
