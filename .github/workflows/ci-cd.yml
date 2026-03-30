@@ -51,27 +51,11 @@ jobs:
           name: test-results
           path: '**/target/surefire-reports/*.xml'
       
-      - name: Generate Build Info
-        run: |
-          mkdir -p sm-shop/target/artifact
-          cp sm-shop/target/*.jar sm-shop/target/artifact/
-          echo "Build: ${{ github.sha }}" > sm-shop/target/artifact/build-info.txt
-          echo "Branch: ${{ github.ref_name }}" >> sm-shop/target/artifact/build-info.txt
-          echo "Date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> sm-shop/target/artifact/build-info.txt
-          echo "Workflow: ${{ github.run_id }}" >> sm-shop/target/artifact/build-info.txt
-      
-      - name: Upload Build Artifacts (Versioned)
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: shopizer-backend-${{ github.sha }}
-          path: sm-shop/target/artifact/
-          retention-days: 30
-      
-      - name: Upload Build Artifacts (Latest)
-        uses: actions/upload-artifact@v4
-        with:
-          name: shopizer-backend-latest
-          path: sm-shop/target/artifact/
+          name: shopizer-jar
+          path: sm-shop/target/*.jar
           retention-days: 7
 
   code-quality:
@@ -163,7 +147,7 @@ jobs:
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: shopizer-backend-latest
+          name: shopizer-jar
           path: sm-shop/target/
       
       - name: Verify JAR exists
@@ -181,17 +165,6 @@ jobs:
         run: |
           docker run --rm shopizerecomm/shopizer:latest java -version
           echo "✅ Image validation passed"
-      
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      
-      - name: Push to Docker Hub
-        run: |
-          docker push shopizerecomm/shopizer:latest
-          echo "✅ Image pushed to Docker Hub"
       
       - name: Save image as compressed artifact
         run: |
