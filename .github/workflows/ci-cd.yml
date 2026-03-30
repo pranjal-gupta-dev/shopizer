@@ -5,6 +5,7 @@ on:
     branches: [main, develop, git-pipeline]
   pull_request:
     branches: [main, develop, git-pipeline]
+  workflow_dispatch:
 
 env:
   JAVA_VERSION: '17'
